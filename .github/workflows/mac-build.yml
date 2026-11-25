@@ -1,4 +1,4 @@
-name: Build Mac App
+name: Build Apps
 
 on:
   push:
@@ -6,30 +6,44 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-mac:
+  mac:
     runs-on: macos-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
-
       - name: Install dependencies
         run: npm install
         env:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
-
       - name: Build macOS .dmg (unsigned, universal)
         run: npm run dist:mac
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: "false"
-
-      - name: Upload .dmg artifact
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
-          name: content-manager-mac-dmg
+          name: mac-dmg
           path: release/*.dmg
+          if-no-files-found: error
+
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install dependencies
+        run: npm install
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
+      - name: Build Windows installer (unsigned)
+        run: npm run dist
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: "false"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-exe
+          path: release/*.exe
           if-no-files-found: error
