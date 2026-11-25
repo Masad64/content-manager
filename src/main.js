@@ -368,14 +368,16 @@ async function checkLicense(email, key) {
     const em = String(email || '').toLowerCase().trim(), ky = String(key || '').trim();
     for (let i = 1; i < rows.length; i++) {
       const r = rows[i];
-      const e = (r[ci('email')] || '').toLowerCase(), k = (r[ci('key')] || '');
-      if (e === em && k === ky) {
+      const e = (r[ci('email')] || '').toLowerCase(), k = (r[ci('key')] || '').trim();
+      // Match on the KEY (case-insensitive). If a row also has an email, that key is locked to that email.
+      if (k && k.toLowerCase() === ky.toLowerCase()) {
+        if (e && e !== em) return { ok: false, reason: 'This key is registered to a different email.' };
         if (ci('active') >= 0) { const a = (r[ci('active')] || '').toLowerCase(); if (a && !/^(yes|true|1|active|on)$/.test(a)) return { ok: false, reason: 'Your account is inactive. Please contact your admin.' }; }
         if (ci('expiry') >= 0) { const exp = (r[ci('expiry')] || '').trim(); if (exp) { const d = new Date(exp); if (!isNaN(d.getTime()) && d < new Date(new Date().toDateString())) return { ok: false, reason: 'Your subscription has expired (' + exp + '). Please renew.' }; } }
-        return { ok: true, email: e };
+        return { ok: true, email: em || e };
       }
     }
-    return { ok: false, reason: 'Incorrect email or key.' };
+    return { ok: false, reason: 'Incorrect license key.' };
   } catch (e) { return { ok: false, reason: e.message }; }
 }
 ipcMain.handle('auth:check', async (_e, { email, key }) => {
