@@ -1,0 +1,51 @@
+{
+  "name": "content-manager",
+  "version": "0.1.0",
+  "description": "Content Manager — team content pipeline + channel tracking (neumorphism)",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "postinstall": "playwright install chromium",
+    "dist": "electron-builder --win",
+    "dist:mac": "electron-builder --mac"
+  },
+  "build": {
+    "appId": "com.contentmanager.app",
+    "productName": "Content Manager",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "src/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": "universal"
+        }
+      ],
+      "category": "public.app-category.productivity"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  },
+  "devDependencies": {
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8"
+  },
+  "dependencies": {
+    "adm-zip": "^0.6.1",
+    "googleapis": "^190.0.0",
+    "playwright": "^1.65.1",
+    "xlsx": "^0.18.5"
+  }
+}

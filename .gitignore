@@ -1,0 +1,7 @@
+node_modules/
+release/
+yt-profile/
+*.zip
+*.log
+.DS_Store
+ADMIN-LOGIN.md

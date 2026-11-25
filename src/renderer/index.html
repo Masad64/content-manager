@@ -1,0 +1,443 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Content Manager</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<!-- LOGIN GATE -->
+<div id="loginGate" class="gate">
+  <div class="gate-card">
+    <div class="gate-logo">C</div>
+    <h2>Content Manager</h2>
+    <p class="gate-sub">Sign in to continue</p>
+    <input id="loginEmail" placeholder="Email" autocomplete="off" />
+    <input id="loginKey" type="password" placeholder="License key" autocomplete="off" />
+    <button class="btn" id="loginBtn">Sign in</button>
+    <p id="loginErr" class="gate-err"></p>
+    <p class="gate-note">Access is provided by your admin. Contact them if you have any issue.</p>
+  </div>
+</div>
+
+<div class="app" id="appRoot" style="display:none">
+  <aside class="side">
+    <div class="brand"><div class="logo">C</div><div><b>Content Manager</b><span>Team workspace</span></div></div>
+    <nav class="nav" id="nav">
+      <button class="on" data-view="dashboard">🏠 Overview</button>
+      <button data-view="niches">🏷 Niches</button>
+      <button data-view="perf">📊 Performance</button>
+      <button data-view="queue">⏳ Upload queue</button>
+      <button data-view="channels">📺 Channels</button>
+      <button data-view="research">📈 Research</button>
+      <button data-view="team">👥 Team</button>
+      <div id="memberNav"></div>
+    </nav>
+    <div class="nav-bottom">
+      <button data-view="mcp">🔌 MCP</button>
+      <button data-view="guide">💡 Guide</button>
+      <button data-view="help">❓ Help</button>
+      <button data-view="settings">⚙ Settings</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="top">
+      <h1 id="pageTitle">Overview</h1>
+    </header>
+
+    <!-- OVERVIEW = what the tool does -->
+    <section class="view on" id="view-dashboard">
+      <p class="greet fade">Hey <span id="userName">Admin</span>, here's your content hub.</p>
+      <p class="rotline" id="rotLine">What can you do here?</p>
+
+      <div class="ov-top">
+        <div class="feature-box fade" style="animation-delay:.05s">
+          <h2>Everything in one place.</h2>
+          <p>No more jumping between Google Sheets and separate channels — run it all from here.</p>
+          <ul class="feat-list">
+            <li>📄 Add all your content sheets in one tool</li>
+            <li>📺 Manage 100+ channels inside each niche</li>
+            <li>⬆ Download, upload &amp; track every video</li>
+          </ul>
+        </div>
+        <div class="ov-pills fade" id="ovPills" style="animation-delay:.12s"></div>
+      </div>
+
+      <div class="card ov-today fade" style="animation-delay:.18s">
+        <h3>Today's activity <span class="mini" id="todayDate"></span></h3>
+        <div id="todayFeed"></div>
+      </div>
+    </section>
+
+    <!-- NICHES = grid of all niches -->
+    <section class="view" id="view-niches">
+      <div class="niche-grid" id="nicheGrid"></div>
+    </section>
+
+    <!-- NICHE (channels + performance + attached sheet + content sheet) -->
+    <section class="view" id="view-niche">
+      <div class="stats" style="grid-template-columns:repeat(4,1fr);margin-bottom:16px">
+        <div class="stat"><div class="l">Uploaded</div><div class="n" id="np-up" style="color:var(--green)">0</div></div>
+        <div class="stat"><div class="l">Remaining</div><div class="n" id="np-rem" style="color:var(--amber)">0</div></div>
+        <div class="stat"><div class="l">This week</div><div class="n" id="np-week" style="color:var(--blue)">0</div></div>
+        <div class="stat"><div class="l">Channels</div><div class="n" id="np-ch">0</div></div>
+      </div>
+      <div class="card" style="margin-bottom:16px">
+        <h3><span id="niche-name"></span> — channels <button class="btn sm" id="addChBtn">＋ Add channel</button></h3>
+        <div id="niche-channels"></div>
+      </div>
+      <div class="card" style="margin-bottom:16px">
+        <h3>Attached sheet</h3>
+        <p style="font-size:12px;color:var(--muted);margin:-6px 0 10px">Paste this niche's Google Sheet link here — content imports straight in (no need to open a separate sheet).</p>
+        <div class="rowflex"><input id="nicheSheetUrl" class="search" placeholder="https://docs.google.com/spreadsheets/..." style="flex:1" /><button class="btn sm" id="nicheSheetSync">Attach &amp; import</button></div>
+        <p id="nicheSheetStatus" style="font-size:12px;color:var(--muted);margin:8px 0 0"></p>
+      </div>
+      <div class="rowflex" style="margin-bottom:12px">
+        <button class="btn sm" id="nicheNewBtn">＋ New content</button>
+        <input class="search" id="nicheSearch" placeholder="Search..." style="width:200px;margin-left:auto" />
+      </div>
+      <div class="card" style="padding:6px"><div class="sheet-wrap"><table class="sheet" id="niche-sheet"></table></div></div>
+    </section>
+
+    <!-- PERFORMANCE -->
+    <section class="view" id="view-perf">
+      <div class="stats" id="perf-stats" style="margin-bottom:18px"></div>
+      <div class="card"><h3>Niche-wise progress</h3><div id="perf-niches"></div></div>
+    </section>
+
+    <!-- UPLOAD QUEUE -->
+    <section class="view" id="view-queue">
+      <div class="card" style="padding:6px"><div class="sheet-wrap"><table class="sheet" id="queue-sheet"></table></div></div>
+    </section>
+
+    <!-- RESEARCH (competitor channels, powered by NexLev) -->
+    <section class="view" id="view-research">
+      <p class="set-sub" style="margin-bottom:16px">Competitor &amp; outlier channels for each of your niches — new channels that are performing well right now. Powered by NexLev.</p>
+      <div id="research-list"></div>
+    </section>
+
+    <!-- CHANNELS -->
+    <section class="view" id="view-channels">
+      <div class="rowflex" style="margin-bottom:8px">
+        <button class="btn" id="addChannelBtn">＋ Add channel</button>
+        <button class="btn" id="ytConnectBtn">▶ Connect YouTube</button>
+        <span id="ytStatus" style="font-size:12px;color:var(--muted)"></span>
+      </div>
+      <p style="font-size:12px;color:var(--muted);margin:0 0 14px">Connect and sign in to your channel once. Then press <b>⬆ Upload</b> on any video (download it first).</p>
+      <div id="channels-list"></div>
+    </section>
+
+    <!-- TEAM -->
+    <section class="view" id="view-team">
+      <div class="card">
+        <h3>Team members <button class="btn sm" id="addMemberBtn">＋ Add member</button></h3>
+        <p style="font-size:12.5px;color:var(--muted);line-height:1.6;margin:0 0 6px">Each member gets their own tab (in the sidebar). Assigned content shows up there automatically.</p>
+        <div id="team-list"></div>
+      </div>
+    </section>
+
+    <!-- MEMBER (one person's content) -->
+    <section class="view" id="view-member">
+      <div class="card">
+        <h3><span id="member-name"></span>'s content <button class="btn sm" id="memberNewBtn">＋ Add for this member</button></h3>
+        <div id="member-list"></div>
+      </div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section class="view" id="view-settings">
+      <div class="settings-grid">
+        <div class="set-nav" id="setNav">
+          <button class="on" data-set="general">⚙ General</button>
+          <button data-set="account">👤 Account</button>
+          <button data-set="api">🔑 API keys</button>
+          <button data-set="data">🔒 Data &amp; privacy</button>
+          <button data-set="about">ℹ️ About</button>
+        </div>
+        <div class="set-body">
+
+          <!-- GENERAL -->
+          <div class="set-pane on" id="set-general">
+            <div class="card">
+              <h3>Theme</h3>
+              <p class="set-sub">App ka look — light ya dark.</p>
+              <div class="rowflex">
+                <button class="btn sm" id="themeLight">☀️ Light</button>
+                <button class="btn sm" id="themeDark">🌙 Dark</button>
+              </div>
+            </div>
+            <div class="card">
+              <h3>Your name</h3>
+              <p class="set-sub">Shown in the Overview greeting.</p>
+              <input id="userNameInput" class="search" style="width:300px" placeholder="Your name" />
+            </div>
+            <div class="card">
+              <h3>Default upload visibility</h3>
+              <p class="set-sub">What visibility new uploads use by default.</p>
+              <select id="setVisibility" style="width:220px">
+                <option value="public">Public</option>
+                <option value="unlisted">Unlisted</option>
+                <option value="private">Private</option>
+              </select>
+            </div>
+            <div class="card">
+              <h3>Notifications</h3>
+              <label class="switch-row"><input type="checkbox" id="setNotif" /> Show a desktop notification when an upload finishes or fails</label>
+            </div>
+            <div class="card">
+              <h3>Default niche</h3>
+              <p class="set-sub">Where new content goes by default.</p>
+              <select id="setDefaultNiche" style="width:220px"></select>
+            </div>
+            <div class="card">
+              <h3>Reset data</h3>
+              <p class="set-sub">Clears all niches, channels, content and team on this PC. Cannot be undone.</p>
+              <button class="btn danger sm" id="resetDataBtn">Clear all data</button>
+            </div>
+          </div>
+
+          <!-- ACCOUNT -->
+          <div class="set-pane" id="set-account">
+            <div class="card">
+              <h3>Signed in</h3>
+              <div class="acc-row">
+                <div style="display:flex;align-items:center;gap:14px">
+                  <div class="acc-dp" id="accDp">C</div>
+                  <div><div class="acc-k">Profile photo</div><div class="acc-v">Shown across the app</div></div>
+                </div>
+                <div class="rowflex">
+                  <button class="btn sm" id="dpBtn">Change</button>
+                  <button class="btn danger sm" id="dpRemove" style="display:none">Remove</button>
+                </div>
+              </div>
+              <div class="acc-row"><div><div class="acc-k">Email</div><div class="acc-v" id="accEmail">—</div></div></div>
+              <div class="acc-row"><div><div class="acc-k">This PC</div><div class="acc-v" id="accPc">—</div></div></div>
+              <div class="acc-row"><div><div class="acc-k">Sign out</div><div class="acc-v">You can sign in again any time</div></div><button class="btn danger sm" id="signOutBtn">Sign out</button></div>
+            </div>
+          </div>
+
+          <!-- API KEYS -->
+          <div class="set-pane" id="set-api">
+            <div class="card">
+              <h3>AI provider key <span class="mini">(BYOK — your own key)</span></h3>
+              <p class="set-sub">For generating content, scripts or thumbnails with AI. Not required for the core (manage + upload).</p>
+              <div class="fld"><label>Provider</label>
+                <select id="aiProvider" style="width:100%">
+                  <option value="openrouter">OpenRouter (bahut saare models, ek key)</option>
+                  <option value="openai">OpenAI (GPT)</option>
+                  <option value="gemini">Google Gemini</option>
+                  <option value="anthropic">Anthropic (Claude)</option>
+                </select>
+              </div>
+              <div class="fld"><label>Model</label><input id="aiModel" placeholder="e.g. openai/gpt-4o-mini" style="width:100%" /></div>
+              <div class="fld"><label>API key</label><input id="aiKey" type="password" placeholder="sk-..." style="width:100%" /></div>
+              <div class="rowflex" style="margin-top:4px">
+                <button class="btn sm" id="aiSaveBtn">Save</button>
+                <button class="btn" id="aiTestBtn">Test key</button>
+                <span id="aiTestStatus" style="font-size:12px;color:var(--muted)"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- DATA & PRIVACY -->
+          <div class="set-pane" id="set-data">
+            <div class="card">
+              <h3>Your data</h3>
+              <p class="set-sub">All data stays on this PC in JSON files — it never leaves. Put this folder on a Google Drive / OneDrive synced folder for backup + team sharing.</p>
+              <div class="rowflex" style="margin-top:12px">
+                <input id="dataPath" readonly style="flex:1" class="inset" />
+                <button class="btn" id="pickFolderBtn">Choose folder</button>
+              </div>
+            </div>
+            <div class="card">
+              <h3>Google Drive (direct upload) <span id="driveStatus" style="font-size:12px;font-weight:400;color:var(--muted)"></span></h3>
+              <p class="set-sub">An OAuth <b>Client ID + Secret</b> (Desktop app) from Google Cloud — for direct upload to Drive. Optional.</p>
+              <div class="fld" style="margin-top:10px"><label>Client ID</label><input id="driveClientId" placeholder="...apps.googleusercontent.com" style="width:100%" /></div>
+              <div class="fld"><label>Client Secret</label><input id="driveClientSecret" type="password" placeholder="GOCSPX-..." style="width:100%" /></div>
+              <div class="rowflex" style="margin-top:6px">
+                <button class="btn sm" id="driveSaveBtn">Save keys</button>
+                <button class="btn" id="driveConnectBtn">Connect Google Drive</button>
+                <button class="btn danger sm" id="driveDisconnectBtn" style="display:none">Disconnect</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- ABOUT -->
+          <div class="set-pane" id="set-about">
+            <div class="card">
+              <h3>About</h3>
+              <div class="acc-row"><div><div class="acc-k">Content Manager</div><div class="acc-v">Version <span id="appVersion">—</span></div></div></div>
+              <div class="acc-row"><div><div class="acc-k">Plan</div><div class="acc-v">Lifetime · every update is free</div></div></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- MCP -->
+    <section class="view" id="view-mcp">
+      <p class="set-sub" style="margin-bottom:16px">Let your AI apps use this tool. Connect once, then ask Claude, ChatGPT or Cursor to add content, check uploads and more — no copy-paste.</p>
+      <div class="card">
+        <h3 class="mini-head">YOUR AI APPS</h3>
+        <div class="ai-row"><div><div class="ai-name">Claude</div><div class="ai-sub">Claude Desktop</div></div><button class="btn sm ai-add" data-app="Claude Desktop → Settings → Developer → Edit Config">Add to Claude</button></div>
+        <div class="ai-row"><div><div class="ai-name">Cursor</div><div class="ai-sub">Cursor editor</div></div><button class="btn sm ai-add" data-app="Cursor → Settings → MCP → Add new server">Add to Cursor</button></div>
+        <div class="ai-row"><div><div class="ai-name">ChatGPT</div><div class="ai-sub">ChatGPT desktop</div></div><button class="btn sm ai-add" data-app="ChatGPT → Settings → Connectors / MCP">Add to ChatGPT</button></div>
+        <div class="ai-row"><div><div class="ai-name">Gemini</div><div class="ai-sub">Gemini</div></div><button class="btn sm ai-add" data-app="Gemini → add as a custom MCP server">Add to Gemini</button></div>
+        <p id="aiHint" class="set-sub" style="margin:12px 0 0"></p>
+      </div>
+      <div class="card">
+        <h3 class="mini-head">ALL OTHER APPS</h3>
+        <p class="set-sub">1. Copy this config. &nbsp;2. Open your AI app's MCP / developer settings. &nbsp;3. Paste it, save and restart the app.</p>
+        <div class="code-box"><pre id="mcpConfig">...</pre><button class="btn sm" id="mcpCopyBtn">Copy</button></div>
+        <p class="set-sub" style="margin-top:10px">This MCP server runs on your own PC — no cloud.</p>
+      </div>
+      <div class="card">
+        <h3 class="mini-head">THEN JUST ASK</h3>
+        <p class="mcp-ex">"Add this video to the Horror niche"<br>"How many uploads are left?"<br>"Set 'A Ferry Captain…' status to Uploaded"<br>"List all content in Alian Stories"</p>
+      </div>
+    </section>
+
+    <!-- GUIDE -->
+    <section class="view" id="view-guide">
+      <div class="card">
+        <h3>Quick guide</h3>
+        <ol class="mcp-steps">
+          <li><b>Niches</b> → create your niche (Horror, Mystery…).</li>
+          <li>Open the niche → paste your Google Sheet link in <b>Attach sheet</b> ("Anyone with link – Viewer"). Content imports in.</li>
+          <li>Press <b>⬇ Download</b> on a video → it's saved into the tool's folder.</li>
+          <li><b>Channels</b> → sign in once with "Connect YouTube", then press <b>⬆ Upload</b> on a video.</li>
+          <li><b>Performance</b> shows uploaded vs remaining, <b>Team</b> has your members.</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- HELP -->
+    <section class="view" id="view-help">
+      <div class="card">
+        <h3>Help</h3>
+        <p class="set-sub" style="line-height:1.7">
+          • App won't open / shows an error → close it and open again.<br>
+          • Sheet won't import → the sheet must be shared "Anyone with link – Viewer".<br>
+          • Browser asks to sign in / verify during upload → do it, then it continues.<br>
+          • Access / login issue → contact your <b>admin</b>.
+        </p>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- ADD/EDIT MODAL -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <h2 id="modalTitle">New content</h2>
+    <input type="hidden" id="f-id" />
+    <div class="fld"><label>Title</label><input id="f-title" placeholder="Video title" /></div>
+    <div class="two">
+      <div class="fld"><label>Category / Niche</label><input id="f-category" placeholder="History, Nature..." /></div>
+      <div class="fld"><label>Type</label><select id="f-type"><option>Long</option><option>Short</option></select></div>
+    </div>
+    <div class="two">
+      <div class="fld"><label>Assigned to</label><input id="f-assignee" placeholder="Team member" /></div>
+      <div class="fld"><label>Status</label><select id="f-status"></select></div>
+    </div>
+    <div class="two">
+      <div class="fld"><label>Channel (on upload)</label><select id="f-channel"></select></div>
+      <div class="fld"><label>Video / Drive link</label><input id="f-url" placeholder="https://..." /></div>
+    </div>
+    <div class="fld" id="driveBox" style="display:none">
+      <label>Google Drive</label>
+      <div class="rowflex">
+        <img id="driveThumb" style="width:62px;height:38px;object-fit:cover;border-radius:8px;display:none" />
+        <button class="btn sm" id="driveUploadBtn" type="button">⬆ Upload video to Drive</button>
+        <a id="driveLinkA" target="_blank" style="font-size:12px;color:var(--accent);text-decoration:none"></a>
+      </div>
+      <div id="driveMeta" style="font-size:11px;color:var(--muted);margin-top:5px"></div>
+    </div>
+    <div class="modal-act">
+      <button class="btn danger sm" id="delBtn" style="margin-right:auto;display:none">Delete</button>
+      <button class="btn sm" id="cancelBtn">Cancel</button>
+      <button class="btn" id="saveBtn">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- CHANNEL MODAL -->
+<div class="modal-bg" id="chBg">
+  <div class="modal" style="width:440px">
+    <h2 id="chTitle">New channel</h2>
+    <input type="hidden" id="ch-idx" />
+    <div class="fld"><label>Niche</label><select id="ch-niche"></select></div>
+    <div class="two">
+      <div class="fld"><label>Channel name</label><input id="ch-name" placeholder="e.g. Court Cases 2.0" /></div>
+      <div class="fld"><label>Subscribers</label><input id="ch-subs" placeholder="e.g. 12.4K" /></div>
+    </div>
+    <div class="fld"><label>YouTube channel link</label><input id="ch-link" placeholder="https://youtube.com/@yourchannel" /></div>
+
+    <div class="sched-box">
+      <label class="switch-row" style="margin-bottom:10px"><input type="checkbox" id="ch-sched-on" /> <b>Auto-upload schedule</b> — upload the next ready video automatically</label>
+      <div id="ch-sched-fields" style="display:none">
+        <div class="two">
+          <div class="fld"><label>Time (24h)</label><input id="ch-sched-time" type="time" value="18:00" /></div>
+          <div class="fld"><label>Visibility</label><select id="ch-sched-vis"><option value="public">Public</option><option value="unlisted">Unlisted</option></select></div>
+        </div>
+        <label style="font-size:12px;color:var(--muted)">Days</label>
+        <div class="days-row" id="ch-sched-days">
+          <button type="button" data-d="1">Mon</button><button type="button" data-d="2">Tue</button><button type="button" data-d="3">Wed</button><button type="button" data-d="4">Thu</button><button type="button" data-d="5">Fri</button><button type="button" data-d="6">Sat</button><button type="button" data-d="0">Sun</button>
+        </div>
+        <p class="set-sub" style="margin:10px 0 0">Keep the tool running at this time. The tool uploads the next <b>Ready</b> video assigned to this channel.</p>
+      </div>
+    </div>
+
+    <div class="modal-act">
+      <button class="btn danger sm" id="ch-del" style="margin-right:auto;display:none">Delete</button>
+      <button class="btn sm" id="ch-cancel">Cancel</button>
+      <button class="btn" id="ch-save">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- MINI INPUT MODAL (prompt replacement) -->
+<div class="modal-bg" id="miniBg">
+  <div class="modal" style="width:400px">
+    <h2 id="miniTitle">Add</h2>
+    <div class="fld"><label id="miniL1">Name</label><input id="miniF1" style="width:100%" /></div>
+    <div class="fld" id="miniF2wrap" style="display:none"><label id="miniL2">Name</label><input id="miniF2" style="width:100%" /></div>
+    <div class="fld" id="miniF3wrap" style="display:none"><label id="miniL3">Name</label><input id="miniF3" style="width:100%" /></div>
+    <div class="modal-act">
+      <button class="btn sm" id="miniCancel">Cancel</button>
+      <button class="btn" id="miniOk">OK</button>
+    </div>
+  </div>
+</div>
+
+<!-- IMPORT MODAL -->
+<div class="modal-bg" id="importBg">
+  <div class="modal" style="width:560px;max-height:86vh;overflow-y:auto">
+    <h2>Import from sheet</h2>
+    <p style="font-size:12px;color:var(--muted);margin:-6px 0 12px">Paste the sheet link and press "Import" — columns are detected automatically.</p>
+    <div class="fld"><label>Google Sheet link (share: "Anyone with link — Viewer")</label>
+      <div class="rowflex"><input id="impUrl" placeholder="https://docs.google.com/spreadsheets/..." style="flex:1" /><button class="btn" id="impLoadUrl">Import</button></div>
+    </div>
+    <div style="text-align:center;font-size:12px;color:var(--muted);margin:4px 0">— ya —</div>
+    <div class="fld"><button class="btn sm" id="impLoadFile">Choose Excel / CSV file</button></div>
+    <p id="impStatus" style="font-size:12px;color:var(--muted);margin:8px 0 0"></p>
+    <div id="impMap" style="display:none">
+      <h3 style="font-size:13px;color:var(--head);margin:16px 0 10px">Map columns</h3>
+      <div id="impMapRows"></div>
+      <label style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--text);margin-top:10px;cursor:pointer">
+        <input type="checkbox" id="impReplace" style="box-shadow:none;width:auto;padding:0" /> Replace all existing content with this import
+      </label>
+    </div>
+    <div class="modal-act">
+      <button class="btn sm" id="impCancel">Cancel</button>
+      <button class="btn" id="impDo" style="display:none">Import <span id="impCount"></span></button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
