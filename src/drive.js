@@ -34,7 +34,7 @@ function connect(cfg, saveCfg, shell) {
         if (err) { res.end('Error: ' + err); server.close(); return reject(new Error(err)); }
         if (!code) { res.end('Waiting...'); return; }
         res.setHeader('Content-Type', 'text/html; charset=utf-8');
-        res.end('<h2 style="font-family:sans-serif">Google Drive connected ✓</h2><p style="font-family:sans-serif">Ye tab band kar dein aur Content Manager par wapas aayein.</p>');
+        res.end('<h2 style="font-family:sans-serif">Google Drive connected ✓</h2><p style="font-family:sans-serif">Ye tab band kar dein aur Munshi par wapas aayein.</p>');
         server.close();
         const { tokens } = await client.getToken(code);
         const merged = { ...(cfg.driveToken || {}), ...tokens };

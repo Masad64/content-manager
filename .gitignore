@@ -5,3 +5,14 @@ yt-profile/
 *.log
 .DS_Store
 ADMIN-LOGIN.md
+
+# video walkthrough artifacts (not part of the app)
+munshi-video/
+rec-out/
+rec.js
+shots/
+shots2/
+bgm.mp3
+*.mp4
+dist-out/
+build/builder-debug.yml

@@ -3,17 +3,17 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Content Manager</title>
+<title>Munshi</title>
 <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 <!-- LOGIN GATE -->
 <div id="loginGate" class="gate">
   <div class="gate-card">
-    <div class="gate-logo">C</div>
-    <h2>Content Manager</h2>
+    <img class="gate-logo-img" src="munshi-logo.webp" alt="Munshi" />
+    <h2>Munshi</h2>
     <p class="gate-sub">Sign in to continue</p>
-    <input id="loginEmail" placeholder="Email" autocomplete="off" />
+    <input id="loginEmail" type="email" placeholder="Email" autocomplete="off" />
     <input id="loginKey" type="password" placeholder="License key" autocomplete="off" />
     <button class="btn" id="loginBtn">Sign in</button>
     <p id="loginErr" class="gate-err"></p>
@@ -23,18 +23,18 @@
 
 <div class="app" id="appRoot" style="display:none">
   <aside class="side">
-    <div class="brand"><div class="logo">C</div><div><b>Content Manager</b><span>Team workspace</span></div></div>
+    <div class="brand"><img class="logo-img" src="munshi-logo.webp" alt="Munshi" /><div><b>Munshi</b><span>Team workspace</span></div></div>
     <nav class="nav" id="nav">
       <button class="on" data-view="dashboard">🏠 Overview</button>
       <button data-view="niches">🏷 Niches</button>
-      <button data-view="perf">📊 Performance</button>
-      <button data-view="queue">⏳ Upload queue</button>
       <button data-view="channels">📺 Channels</button>
       <button data-view="research">📈 Research</button>
       <button data-view="team">👥 Team</button>
+      <button data-view="users" id="navUsers" hidden>🧾 Users</button>
       <div id="memberNav"></div>
     </nav>
     <div class="nav-bottom">
+      <button data-view="community">💬 Join our community</button>
       <button data-view="mcp">🔌 MCP</button>
       <button data-view="guide">💡 Guide</button>
       <button data-view="help">❓ Help</button>
@@ -45,6 +45,7 @@
   <main class="main">
     <header class="top">
       <h1 id="pageTitle">Overview</h1>
+      <div class="built-by"><span class="bb-ic">👨‍💻</span> Built By <a href="#" id="builtByLink" title="Open Facebook profile">MAsad</a> <span class="bb-heart">💚</span></div>
     </header>
 
     <!-- OVERVIEW = what the tool does -->
@@ -54,20 +55,49 @@
 
       <div class="ov-top">
         <div class="feature-box fade" style="animation-delay:.05s">
-          <h2>Everything in one place.</h2>
-          <p>No more jumping between Google Sheets and separate channels — run it all from here.</p>
-          <ul class="feat-list">
-            <li>📄 Add all your content sheets in one tool</li>
-            <li>📺 Manage 100+ channels inside each niche</li>
-            <li>⬆ Download, upload &amp; track every video</li>
-          </ul>
+          <div class="fb-left">
+            <h2>Everything in one place.</h2>
+            <p>No more jumping between Google Sheets and separate channels — run it all from here.</p>
+          </div>
+          <div class="fb-wave" id="fbWave">
+            <div class="fw-ic" id="fwIc">📤</div>
+            <div class="fw-label" id="fwLabel">Upload videos</div>
+            <svg class="fw-svg" viewBox="0 0 200 40" preserveAspectRatio="none" aria-hidden="true">
+              <path id="fwPath" d="M0 20 H70 Q80 6 90 20 T110 20 Q120 34 130 20 H200" fill="none" stroke="rgba(255,255,255,.85)" stroke-width="1.6" stroke-linecap="round"/>
+            </svg>
+            <div class="fw-sub" id="fwSub">Download &amp; upload every video from here</div>
+          </div>
         </div>
         <div class="ov-pills fade" id="ovPills" style="animation-delay:.12s"></div>
       </div>
 
-      <div class="card ov-today fade" style="animation-delay:.18s">
-        <h3>Today's activity <span class="mini" id="todayDate"></span></h3>
-        <div id="todayFeed"></div>
+      <!-- ===== performance dashboard (merged into Overview) ===== -->
+      <div id="perf-issues"></div>
+      <div class="perf-filter">
+        <span class="pf-lab">📅 Date</span>
+        <input type="date" id="perfFrom" />
+        <span class="pf-arrow">→</span>
+        <input type="date" id="perfTo" />
+        <button class="btn sm" id="perfApply">Apply</button>
+        <button class="btn sm" id="perfAll">All time</button>
+      </div>
+      <p class="set-sub" style="margin:-6px 0 14px">Tip: click any box below to see just that list.</p>
+      <div class="dash-tiles" id="perf-stats"></div>
+      <div class="card">
+        <h3>
+          <span>📊 Uploads per day <span class="mini" id="perf-chart-sub"></span></span>
+          <span class="rangetabs" id="perfRange">
+            <button data-days="7">7 days</button>
+            <button data-days="30" class="on">30 days</button>
+            <button data-days="90">90 days</button>
+          </span>
+        </h3>
+        <div class="legend"><span class="lg"><i style="background:var(--green)"></i>Uploaded</span></div>
+        <div id="perf-chart"></div>
+      </div>
+      <div class="card">
+        <h3 id="perf-detail-title">Overview</h3>
+        <div id="perf-detail"></div>
       </div>
     </section>
 
@@ -94,6 +124,14 @@
         <div class="rowflex"><input id="nicheSheetUrl" class="search" placeholder="https://docs.google.com/spreadsheets/..." style="flex:1" /><button class="btn sm" id="nicheSheetSync">Attach &amp; import</button></div>
         <p id="nicheSheetStatus" style="font-size:12px;color:var(--muted);margin:8px 0 0"></p>
       </div>
+      <div class="card" style="margin-bottom:16px">
+        <h3>Local folder <span class="mini" style="font-weight:400;color:var(--muted)">— no sheet needed</span></h3>
+        <p style="font-size:12px;color:var(--muted);margin:-6px 0 10px">Got your videos sitting in a folder on this PC? Pick the folder and every video becomes content in this niche.</p>
+        <div class="rowflex"><input id="nicheFolderPath" class="search" placeholder="Pick a folder, or paste a full path (e.g. D:\\Videos\\Horror)" style="flex:1" /><button class="btn sm" id="nicheFolderPick">📁 Pick folder</button></div>
+        <label class="rowflex" style="margin:10px 0 0;font-size:12.5px;color:var(--text);cursor:pointer"><input type="checkbox" id="nicheFolderSpread" style="width:auto;margin-right:8px" />Spread the videos across this niche's channels</label>
+        <div class="rowflex" style="margin-top:10px"><button class="btn sm lime" id="nicheFolderImport">⬇ Import videos from folder</button></div>
+        <p id="nicheFolderStatus" style="font-size:12px;color:var(--muted);margin:8px 0 0"></p>
+      </div>
       <div class="rowflex" style="margin-bottom:12px">
         <button class="btn sm" id="nicheNewBtn">＋ New content</button>
         <input class="search" id="nicheSearch" placeholder="Search..." style="width:200px;margin-left:auto" />
@@ -101,21 +139,20 @@
       <div class="card" style="padding:6px"><div class="sheet-wrap"><table class="sheet" id="niche-sheet"></table></div></div>
     </section>
 
-    <!-- PERFORMANCE -->
-    <section class="view" id="view-perf">
-      <div class="stats" id="perf-stats" style="margin-bottom:18px"></div>
-      <div class="card"><h3>Niche-wise progress</h3><div id="perf-niches"></div></div>
-    </section>
-
-    <!-- UPLOAD QUEUE -->
-    <section class="view" id="view-queue">
-      <div class="card" style="padding:6px"><div class="sheet-wrap"><table class="sheet" id="queue-sheet"></table></div></div>
-    </section>
-
-    <!-- RESEARCH (competitor channels, powered by NexLev) -->
+    <!-- RESEARCH HUB (tool cards, each uses the user's own YouTube API key) -->
     <section class="view" id="view-research">
-      <p class="set-sub" style="margin-bottom:16px">Competitor &amp; outlier channels for each of your niches — new channels that are performing well right now. Powered by NexLev.</p>
-      <div id="research-list"></div>
+      <div id="research-home">
+        <div class="rs-stats" id="research-stats"></div>
+        <p class="rs-sect">TOOLS</p>
+        <div class="rs-tools" id="research-tools"></div>
+      </div>
+      <div id="research-tool" hidden>
+        <div class="rowflex" style="align-items:center;margin-bottom:16px;gap:12px">
+          <button class="btn sm" id="rsBack">← Back</button>
+          <h2 id="research-tool-title" style="margin:0;font-size:18px;color:var(--head)"></h2>
+        </div>
+        <div id="research-tool-body"></div>
+      </div>
     </section>
 
     <!-- CHANNELS -->
@@ -136,6 +173,27 @@
         <p style="font-size:12.5px;color:var(--muted);line-height:1.6;margin:0 0 6px">Each member gets their own tab (in the sidebar). Assigned content shows up there automatically.</p>
         <div id="team-list"></div>
       </div>
+    </section>
+
+    <!-- USERS (admin-only: who signed in / is using the tool) -->
+    <section class="view" id="view-users">
+      <div class="rowflex" style="margin-bottom:6px">
+        <h2 style="margin:0;font-size:18px;color:var(--head)">Users <span class="mini" style="font-weight:400;color:var(--muted)">— who's using Munshi</span></h2>
+        <button class="btn sm" id="usersRefresh" style="margin-left:auto">⟳ Refresh</button>
+      </div>
+      <p class="set-sub" style="margin:-2px 0 14px">Every sign-in is logged to your central sheet. Only you (admin) can see this tab.</p>
+      <div class="dash-tiles" id="users-stats"></div>
+      <div class="card">
+        <div class="rowflex" style="margin-bottom:10px"><input class="search" id="usersSearch" placeholder="Search email…" style="max-width:240px" /></div>
+        <div id="users-body"></div>
+      </div>
+    </section>
+
+    <!-- COMMUNITY (WhatsApp / Facebook / Emerge AI) -->
+    <section class="view" id="view-community">
+      <h2 style="margin:0 0 4px;font-size:20px;color:var(--head)">Join our community 💬</h2>
+      <p class="set-sub" style="margin:0 0 18px">Jump in, ask questions, and learn faceless YouTube with us — free.</p>
+      <div class="comm-grid" id="comm-grid"></div>
     </section>
 
     <!-- MEMBER (one person's content) -->
@@ -162,10 +220,20 @@
           <div class="set-pane on" id="set-general">
             <div class="card">
               <h3>Theme</h3>
-              <p class="set-sub">App ka look — light ya dark.</p>
+              <p class="set-sub">App look — light or dark.</p>
               <div class="rowflex">
                 <button class="btn sm" id="themeLight">☀️ Light</button>
                 <button class="btn sm" id="themeDark">🌙 Dark</button>
+              </div>
+            </div>
+            <div class="card">
+              <h3>Display size</h3>
+              <p class="set-sub">Make everything bigger or smaller to fit your screen. (Shortcut: Ctrl + / Ctrl − / Ctrl 0)</p>
+              <div class="rowflex" style="align-items:center">
+                <button class="btn sm" id="zoomOut">A −</button>
+                <span id="zoomVal" style="min-width:52px;text-align:center;font-weight:700;color:var(--head)">115%</span>
+                <button class="btn sm" id="zoomIn">A +</button>
+                <button class="btn sm" id="zoomReset">Reset</button>
               </div>
             </div>
             <div class="card">
@@ -225,19 +293,35 @@
               <p class="set-sub">For generating content, scripts or thumbnails with AI. Not required for the core (manage + upload).</p>
               <div class="fld"><label>Provider</label>
                 <select id="aiProvider" style="width:100%">
-                  <option value="openrouter">OpenRouter (bahut saare models, ek key)</option>
+                  <option value="openrouter">OpenRouter (many models, one key)</option>
                   <option value="openai">OpenAI (GPT)</option>
                   <option value="gemini">Google Gemini</option>
                   <option value="anthropic">Anthropic (Claude)</option>
                 </select>
               </div>
-              <div class="fld"><label>Model</label><input id="aiModel" placeholder="e.g. openai/gpt-4o-mini" style="width:100%" /></div>
+              <div class="fld"><label>Model <span class="mini">(cheap ones listed first)</span></label>
+                <select id="aiModelSel" style="width:100%"></select>
+                <input id="aiModel" placeholder="type any model id, e.g. openai/gpt-4o-mini" style="width:100%;margin-top:8px" hidden />
+              </div>
               <div class="fld"><label>API key</label><input id="aiKey" type="password" placeholder="sk-..." style="width:100%" /></div>
               <div class="rowflex" style="margin-top:4px">
                 <button class="btn sm" id="aiSaveBtn">Save</button>
                 <button class="btn" id="aiTestBtn">Test key</button>
                 <span id="aiTestStatus" style="font-size:12px;color:var(--muted)"></span>
               </div>
+            </div>
+
+            <div class="card">
+              <h3>YouTube Data API key <span class="mini">(BYOK — your own key)</span></h3>
+              <p class="set-sub">Powers the <b>Research</b> tab — the tool uses this to find competitor channels for your niches. Free to get from Google. Each user adds their own.</p>
+              <div class="fld"><label>API key</label><input id="ytApiKey" type="password" placeholder="AIza..." style="width:100%" /></div>
+              <div class="rowflex" style="margin-top:4px">
+                <button class="btn sm" id="ytApiSaveBtn">Save</button>
+                <button class="btn" id="ytApiTestBtn">Test key</button>
+                <button class="btn" id="ytApiHelpBtn">How to get a key</button>
+                <span id="ytApiStatus" style="font-size:12px;color:var(--muted)"></span>
+              </div>
+              <div id="ytQuotaLine" class="mini" style="margin-top:8px;color:var(--muted)"></div>
             </div>
           </div>
 
@@ -268,8 +352,9 @@
           <div class="set-pane" id="set-about">
             <div class="card">
               <h3>About</h3>
-              <div class="acc-row"><div><div class="acc-k">Content Manager</div><div class="acc-v">Version <span id="appVersion">—</span></div></div></div>
+              <div class="acc-row"><div><div class="acc-k">Munshi</div><div class="acc-v">Version <span id="appVersion">—</span></div></div><button class="btn sm" id="updateCheckBtn">⟳ Check for updates</button></div>
               <div class="acc-row"><div><div class="acc-k">Plan</div><div class="acc-v">Lifetime · every update is free</div></div></div>
+              <p id="updateStatus" style="font-size:12px;color:var(--muted);margin:8px 0 0"></p>
             </div>
           </div>
 
@@ -327,6 +412,11 @@
       </div>
     </section>
   </main>
+  <div class="update-bar" id="updateBar" hidden>
+    <span id="updateBarText">🔔 A new version of Munshi is ready.</span>
+    <button class="btn sm lime" id="updateNowBtn">Update now</button>
+    <button class="update-x" id="updateDismiss" title="Later">✕</button>
+  </div>
 </div>
 
 <!-- ADD/EDIT MODAL -->
