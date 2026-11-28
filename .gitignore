@@ -16,3 +16,6 @@ bgm.mp3
 *.mp4
 dist-out/
 build/builder-debug.yml
+
+# keep the bundled how-to video
+!src/renderer/assets/how-to-use.mp4

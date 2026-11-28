@@ -580,10 +580,18 @@ select{cursor:pointer}
 .update-x{background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;padding:4px 6px}
 .update-x:hover{color:var(--red)}
 /* ===== Community ===== */
-.comm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
-.comm-card{background:var(--light);border-radius:16px;padding:20px 18px;box-shadow:5px 5px 12px var(--dark),-5px -5px 12px var(--light);display:flex;flex-direction:column;gap:8px;border-top:4px solid var(--accent)}
-.comm-card.fb{border-top-color:#3b5998}.comm-card.wa{border-top-color:#25d366}.comm-card.em{border-top-color:var(--accent)}
-.comm-ic{font-size:30px;line-height:1}
-.comm-name{font-size:15px;font-weight:700;color:var(--head)}
-.comm-desc{font-size:12.5px;color:var(--muted);line-height:1.6;flex:1}
-.comm-join{margin-top:6px;align-self:flex-start}
+.comm-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;max-width:760px;margin:6px auto 0;padding:22px 10px;background:var(--page);border-radius:22px;box-shadow:7px 7px 16px var(--dark),-7px -7px 16px var(--light)}
+.comm-card{background:transparent;box-shadow:none;border-right:1px solid rgba(130,140,160,.18);display:flex;flex-direction:column;align-items:center;text-align:center;gap:7px;padding:8px 14px}
+.comm-card:last-child{border-right:none}
+.comm-ic{width:56px;height:56px;line-height:0;margin-bottom:6px;display:flex;align-items:center;justify-content:center}
+.comm-ic svg{width:56px;height:56px;display:block}
+.eai-badge{display:flex;align-items:center;justify-content:center;width:56px;height:56px;border-radius:50%;background:#fff;box-shadow:0 3px 9px rgba(0,0,0,.14)}
+.eai-badge img{width:40px;height:auto;display:block}
+.comm-name{font-size:15.5px;font-weight:800;color:var(--head);letter-spacing:.2px}
+.comm-sub{font-size:12px;color:var(--muted)}
+.comm-join{margin-top:14px;align-self:center;min-width:118px}
+@media(max-width:620px){.comm-grid{grid-template-columns:1fr}.comm-card{border-right:none;border-bottom:1px solid rgba(130,140,160,.18);padding:20px 14px}.comm-card:last-child{border-bottom:none}}
+/* ===== How to use video ===== */
+.howto-card{margin-bottom:18px}
+.howto-video{margin-top:14px;border-radius:14px;overflow:hidden;background:#000;box-shadow:5px 5px 14px var(--dark),-5px -5px 14px var(--light);aspect-ratio:16/9;max-width:860px}
+.howto-video video{width:100%;height:100%;display:block;object-fit:contain;background:#000}

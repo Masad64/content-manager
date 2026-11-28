@@ -161,20 +161,23 @@ document.querySelectorAll('#nav > button[data-view], .nav-bottom > button[data-v
   else if (v === 'mcp') loadMcp();
 }));
 
-// ---- Community: WhatsApp / Facebook group / Emerge AI (links set here) ----
+// ---- Community: WhatsApp / Course Outlines / Facebook group (links set here) ----
+const WA_SVG = `<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path fill="#25D366" d="M16 0C7.163 0 0 7.163 0 16c0 2.82.73 5.47 2.01 7.78L0 32l8.44-2.21A15.9 15.9 0 0 0 16 32c8.837 0 16-7.163 16-16S24.837 0 16 0z"/><path fill="#fff" d="M24.5 19.6c-.37-.19-2.18-1.08-2.52-1.2-.34-.12-.59-.19-.83.19-.25.37-.95 1.2-1.17 1.44-.21.25-.43.28-.8.09-.37-.19-1.56-.57-2.97-1.83-1.1-.98-1.84-2.19-2.06-2.56-.21-.37-.02-.57.16-.76.17-.17.37-.43.56-.65.18-.22.24-.37.37-.62.12-.25.06-.46-.03-.65-.09-.19-.83-2-1.14-2.74-.3-.72-.6-.62-.83-.63l-.71-.01c-.25 0-.65.09-.99.46-.34.37-1.3 1.27-1.3 3.1 0 1.83 1.33 3.6 1.52 3.85.19.25 2.62 4 6.35 5.61.89.38 1.58.61 2.12.78.89.28 1.7.24 2.34.15.71-.11 2.18-.89 2.49-1.75.31-.86.31-1.6.22-1.75-.09-.15-.34-.25-.71-.43z"/></svg>`;
+const FB_SVG = `<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><circle cx="16" cy="16" r="16" fill="#1877F2"/><path fill="#fff" d="M21.5 20.5l.7-4.6h-4.4v-3c0-1.26.62-2.49 2.6-2.49H22.4V6.5s-1.73-.3-3.38-.3c-3.45 0-5.7 2.09-5.7 5.87v3.33H9.3v4.6h4.02V32h4.98V20.5z"/></svg>`;
+const EAI_SVG = `<span class="eai-badge"><img src="assets/emergeai-logo.png" alt="EmergeAI" /></span>`;
 const COMMUNITY = [
-  { icon: '💬', name: 'WhatsApp group', desc: 'Daily tips, quick help and updates — join the chat.', btn: 'Join WhatsApp', url: '', cls: 'wa' },
-  { icon: '📘', name: 'Facebook group', desc: 'Share wins, ask questions and connect with other creators.', btn: 'Join Facebook group', url: '', cls: 'fb' },
-  { icon: '🚀', name: 'Emerge AI community', desc: 'Our official hub — free faceless YouTube training & more.', btn: 'Visit Emerge AI', url: '', cls: 'em' }
+  { svg: WA_SVG,  name: 'WhatsApp',        sub: 'Official Number',    btn: 'Contact Us', url: 'https://wa.me/923046012916', cls: 'wa' },
+  { svg: EAI_SVG, name: 'Course Outlines', sub: 'Join us',            btn: 'Visit',      url: 'https://portal.emergeai.io/en/course-detail/course2-0/44396/', cls: 'em' },
+  { svg: FB_SVG,  name: 'Facebook Group',  sub: 'Creators community', btn: 'Join Group', url: 'https://www.facebook.com/groups/546405077781054', cls: 'fb' }
 ];
 function renderCommunity() {
   const box = $('comm-grid'); if (!box) return;
   box.innerHTML = COMMUNITY.map((c, i) => `
     <div class="comm-card ${c.cls}">
-      <div class="comm-ic">${c.icon}</div>
+      <div class="comm-ic">${c.svg}</div>
       <div class="comm-name">${esc(c.name)}</div>
-      <div class="comm-desc">${esc(c.desc)}</div>
-      ${c.url ? `<button class="btn lime comm-join" data-i="${i}">${esc(c.btn)}</button>` : `<button class="btn comm-join" data-i="${i}" disabled>Link coming soon</button>`}
+      <div class="comm-sub">${esc(c.sub)}</div>
+      <button class="btn comm-join" data-i="${i}">${esc(c.btn)}</button>
     </div>`).join('');
   box.querySelectorAll('.comm-join').forEach(b => b.addEventListener('click', () => { const c = COMMUNITY[Number(b.dataset.i)]; if (c && c.url) window.api.openLink(c.url); }));
 }
